@@ -1,17 +1,21 @@
 package ru.vzhigalov.mail;
 
-import com.sun.mail.util.MailSSLSocketFactory;
+//import com.sun.tools.javac.util.StringUtils;
+
 import ru.vzhigalov.servise.Config;
 
-import java.security.GeneralSecurityException;
+import javax.mail.*;
+import javax.mail.search.FlagTerm;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.mail.*;
-import javax.mail.search.FlagTerm;
 
 public class Mail {
-    public List<String> getUnReadMessagesSubjects() throws javax.mail.MessagingException {
+    public List<String> getUnReadMessagesSubjects() throws Exception {
         Config config = new Config();
         config.init();
         String user = config.get("mail.login");
@@ -26,13 +30,12 @@ public class Mail {
         properties.put("mail.imap.host", host);
         properties.put("mail.imap.port", port);
         properties.put("mail.debug", debug);
-        properties.put("mail.store.protocol" , protocol );
+        properties.put("mail.store.protocol", protocol);
 
-        properties.put("mail.imap.ssl.enable", "true"   );
+        properties.put("mail.imap.ssl.enable", "true");
         properties.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         properties.put("mail.imap.socketFactory.fallback", "false");
         properties.put("mail.imap.ssl.trust", "*");
-
 
         // Настроить аутентификацию, получить session
 
@@ -53,10 +56,28 @@ public class Mail {
 
         // Получить каталог
         Message[] unreadMessages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+        List<File> attachments = new ArrayList<File>();
+        for (Message message : unreadMessages) {
+            Object content = message.getContent();
+            if (content instanceof Multipart) {
+                Multipart multipart = (Multipart) message.getContent();
+
+                for (int i = 0; i < multipart.getCount(); i++) {
+                    BodyPart bodyPart = multipart.getBodyPart(i);
+                    if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
+                        continue; // dealing with attachments only
+                    }
+                    InputStream is = bodyPart.getInputStream();
+                    File f = new File("C:/" + bodyPart.getFileName());
+                    saveFile(f, bodyPart);
+                    attachments.add(f);
+                }
+            }
+        }
         List<String> subjects = new ArrayList<>();
         for (int i = 0; i < unreadMessages.length; i++) {
             subjects.add(unreadMessages[i].getSubject());
-            //unreadMessages[i].setFlag(Flags.Flag.SEEN, true); //true - пометить прочитанным
+            unreadMessages[i].setFlag(Flags.Flag.SEEN, false); //true - пометить прочитанным
         }
 
         // Закрыть соединение
@@ -64,5 +85,21 @@ public class Mail {
         store.close();
         System.out.println(subjects);
         return subjects;
+    }
+
+    private static int saveFile(File saveFile, Part part) throws Exception {
+
+        BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(saveFile));
+        byte[] buff = new byte[204800];
+        InputStream is = part.getInputStream();
+        int ret = 0, count = 0;
+        while ((ret = is.read(buff)) > 0) {
+            bos.write(buff, 0, ret);
+            count += ret;
+        }
+        bos.close();
+        is.close();
+        return count;
     }
 }

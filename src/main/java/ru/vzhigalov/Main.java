@@ -4,17 +4,22 @@ import ru.vzhigalov.dao.Dao;
 import ru.vzhigalov.mail.Mail;
 import ru.vzhigalov.servise.Config;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public class Main {
 
-    public static void main(String[] args) throws GeneralSecurityException, javax.mail.MessagingException {
+    public static void main(String[] args) throws Exception {
         Mail mail = new Mail();
         Dao dao = new Dao();
         Config config = new Config();
 
         config.init();
 
-        mail.getUnReadMessagesSubjects();
+        try {
+            mail.getUnReadMessagesSubjects();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
