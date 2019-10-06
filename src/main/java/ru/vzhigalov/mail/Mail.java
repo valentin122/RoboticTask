@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -67,7 +68,7 @@ public class Mail {
                     if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
                         continue; // dealing with attachments only
                     }
-                    InputStream is = bodyPart.getInputStream();
+                    //InputStream is = bodyPart.getInputStream();
                     File f = new File("C:/" + bodyPart.getFileName());
                     saveFile(f, bodyPart);
                     attachments.add(f);
@@ -87,11 +88,12 @@ public class Mail {
         return subjects;
     }
 
-    private static int saveFile(File saveFile, Part part) throws Exception {
-
+    private void saveFile(File saveFile, Part part) throws Exception {
+      /*  byte[] buff = new byte[204800];
+        int buffer = 48;
         BufferedOutputStream bos = new BufferedOutputStream(
-                new FileOutputStream(saveFile));
-        byte[] buff = new byte[204800];
+                new FileOutputStream(saveFile), buffer);
+
         InputStream is = part.getInputStream();
         int ret = 0, count = 0;
         while ((ret = is.read(buff)) > 0) {
@@ -101,5 +103,13 @@ public class Mail {
         bos.close();
         is.close();
         return count;
+*/
+        File file = new File("src/main/resources/" + part.getFileName());
+        try(InputStream inputStream = part.getInputStream()) {
+            java.nio.file.Files.copy(
+                    inputStream,
+                    file.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 }
