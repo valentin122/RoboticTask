@@ -1,6 +1,6 @@
 package ru.vzhigalov.csv;
 
-public class PriceList {
+public class Detail {
     private String nomenclature;
     private String brand;
     private String article;
@@ -12,27 +12,27 @@ public class PriceList {
     private int availability;
     private int deliveryPeriod;
     private String catalogueNumber;
-    private String OemNumber;
+    private String oemNumber;
     private String applicability;
     private String vendorCode;
 
-    public PriceList(){
+    public Detail(){
     }
 
-    public PriceList(String nomenclature,
-                     String brand,
-                     String article,
-                     String description,
-                     double volume,
-                     int shipment,
-                     double price,
-                     double basePrice,
-                     int availability,
-                     int deliveryPeriod,
-                     String catalogueNumber,
-                     String oemNumber,
-                     String applicability,
-                     String vendorCode) {
+    public Detail(String nomenclature,
+                  String brand,
+                  String article,
+                  String description,
+                  double volume,
+                  int shipment,
+                  double price,
+                  double basePrice,
+                  int availability,
+                  int deliveryPeriod,
+                  String catalogueNumber,
+                  String oemNumber,
+                  String applicability,
+                  String vendorCode) {
         this.nomenclature = nomenclature;
         this.brand = brand;
         this.article = article;
@@ -44,7 +44,7 @@ public class PriceList {
         this.availability = availability;
         this.deliveryPeriod = deliveryPeriod;
         this.catalogueNumber = catalogueNumber;
-        this.OemNumber = oemNumber;
+        this.oemNumber = oemNumber;
         this.applicability = applicability;
         this.vendorCode = vendorCode;
     }
@@ -138,11 +138,11 @@ public class PriceList {
     }
 
     public String getOemNumber() {
-        return OemNumber;
+        return oemNumber;
     }
 
     public void setOemNumber(String oemNumber) {
-        OemNumber = oemNumber;
+        this.oemNumber = oemNumber;
     }
 
     public String getApplicability() {
@@ -159,5 +159,25 @@ public class PriceList {
 
     public void setVendorCode(String vendorCode) {
         this.vendorCode = vendorCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Detail{" +
+                "nomenclature='" + nomenclature + '\'' +
+                ", brand='" + brand + '\'' +
+                ", article='" + article + '\'' +
+                ", description='" + description + '\'' +
+                ", volume=" + volume +
+                ", shipment=" + shipment +
+                ", price=" + price +
+                ", basePrice=" + basePrice +
+                ", availability=" + availability +
+                ", deliveryPeriod=" + deliveryPeriod +
+                ", catalogueNumber='" + catalogueNumber + '\'' +
+                ", oemNumber='" + oemNumber + '\'' +
+                ", applicability='" + applicability + '\'' +
+                ", vendorCode='" + vendorCode + '\'' +
+                '}';
     }
 }

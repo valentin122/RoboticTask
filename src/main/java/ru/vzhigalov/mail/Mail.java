@@ -57,7 +57,7 @@ public class Mail {
 
         // Получить каталог
         Message[] unreadMessages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-        List<File> attachments = new ArrayList<File>();
+        //List<File> attachments = new ArrayList<File>();
         for (Message message : unreadMessages) {
             Object content = message.getContent();
             if (content instanceof Multipart) {
@@ -65,13 +65,13 @@ public class Mail {
 
                 for (int i = 0; i < multipart.getCount(); i++) {
                     BodyPart bodyPart = multipart.getBodyPart(i);
-                    if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
+                   /* if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
                         continue; // dealing with attachments only
-                    }
+                    }*/
                     //InputStream is = bodyPart.getInputStream();
-                    File f = new File("C:/" + bodyPart.getFileName());
-                    saveFile(f, bodyPart);
-                    attachments.add(f);
+                    //File f = new File("C:/" + bodyPart.getFileName());
+                    saveFile(bodyPart);
+                    //attachments.add(f);
                 }
             }
         }
@@ -88,8 +88,8 @@ public class Mail {
         return subjects;
     }
 
-    private void saveFile(File saveFile, Part part) throws Exception {
-      /*  byte[] buff = new byte[204800];
+    private void saveFile(Part part) throws Exception {
+        /*  byte[] buff = new byte[20480];
         int buffer = 48;
         BufferedOutputStream bos = new BufferedOutputStream(
                 new FileOutputStream(saveFile), buffer);
@@ -103,7 +103,8 @@ public class Mail {
         bos.close();
         is.close();
         return count;
-*/
+        */
+
         File file = new File("src/main/resources/" + part.getFileName());
         try(InputStream inputStream = part.getInputStream()) {
             java.nio.file.Files.copy(
