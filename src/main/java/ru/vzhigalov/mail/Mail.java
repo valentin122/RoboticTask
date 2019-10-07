@@ -1,14 +1,10 @@
 package ru.vzhigalov.mail;
 
-//import com.sun.tools.javac.util.StringUtils;
-
 import ru.vzhigalov.servise.Config;
 
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -57,7 +53,7 @@ public class Mail {
 
         // Получить каталог
         Message[] unreadMessages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-        //List<File> attachments = new ArrayList<File>();
+
         for (Message message : unreadMessages) {
             Object content = message.getContent();
             if (content instanceof Multipart) {
@@ -65,13 +61,8 @@ public class Mail {
 
                 for (int i = 0; i < multipart.getCount(); i++) {
                     BodyPart bodyPart = multipart.getBodyPart(i);
-                   /* if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
-                        continue; // dealing with attachments only
-                    }*/
-                    //InputStream is = bodyPart.getInputStream();
-                    //File f = new File("C:/" + bodyPart.getFileName());
+
                     saveFile(bodyPart);
-                    //attachments.add(f);
                 }
             }
         }
